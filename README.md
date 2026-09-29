@@ -15,6 +15,19 @@ generate resources that were supplied. Also overrides an auto-update default
 
 Consumed as a child by `test-run-platform-seed-only`.
 
+## Secrets
+
+`src/secrets/*.age` are real age-encrypted values (HHGTTG quotes - this is a
+test fixture, nothing sensitive). The key is published here ON PURPOSE so any
+engineer can inspect/decrypt/re-encrypt them with the kaptain-user-scripts
+tooling (`kaptain-decrypt` / `kaptain-encrypt`):
+
+```
+AGE-SECRET-KEY-17DT7C08VAM4N4QCJUG7HRNSRDNVADJAXH0FWT80FJQLLC5DS8TDQQP7AAD
+```
+
+Never do this in a real project.
+
 Pending notes:
 
 - Uses draft schema fields (`clusterScopedDelegation`,

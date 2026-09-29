@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  # Supplied resources MUST be checksum named or the build fails; the build's
+  # checksum pass resolves the suffix from the rendered content.
+  name: ${ProjectName}-env-configmap-checksum
+data:
+  LOG_LEVEL: "${EnvLogLevel}"
+  DEPLOY_MODE: "job"
