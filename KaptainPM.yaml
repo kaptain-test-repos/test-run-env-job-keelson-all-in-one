@@ -1,0 +1,66 @@
+apiVersion: kaptain.org/1.23
+kind: kubernetes-run-environment
+spec:
+  global:
+    projectName:
+      stripRepositoryNamePrefix: test
+  contents:
+    - kubernetes-build-product:[1.0,2.0)
+    - kubernetes-bundle-resources:[1.31,2.0)
+  main:
+    environment:
+      # job mode requires keelson (keel cannot trigger jobs); the deploy image
+      # side is a suspended CronJob with trigger-job-on-update plus a
+      # zero-scale debug Deployment an operator can scale to 1.
+      deployMode: job
+      # Coverage: job-mode post-deploy sleeps, one with a unit and one as
+      # bare seconds. The namespace-only job fixture keeps the defaults.
+      jobPostDeploySleepAfterSuccess: 5m
+      jobPostDeploySleepAfterFailure: 172800
+      imageAutoUpdateProvider: keelson
+      # Not in the draft schema yet: exercises overriding an auto-update
+      # default (global defaults are policy patch / trigger poll / 1 minute).
+      imageAutoUpdatePollSchedule: 5m
+      # Not in the draft schema yet: env applies its own cluster-scoped
+      # resources (cluster-admin role, all-in-one model).
+      clusterScopedDelegation: self
+      # Supplied templates model: ConfigMap and Secret both supplied in
+      # src/environment (checksum named), the build must NOT generate them.
+      generateIdealEnvironmentDeployManifests: true
+      checksumSecretsTiming: build
+      failOnUnreferencedConfigOrSecrets: true
+      # Sign-off master disable: this fixture's product contents drag in
+      # vendor RBAC/webhooks and signing all of them off is
+      # test-run-env-job-keelson-namespace-only's job, not this repo's.
+      trustedContributorsOnly: true
+      imageDeployManifestsApplyMode: enforce-state-normally
+      environmentDeployBaseImage:
+        registry: ghcr.io
+        namespace: kube-kaptain
+        family: trixie-slim
+        version: 1.0.13.1.34.1
+      # Coverage: single-character glob; accumulating types all / age /
+      # count, so every type appears across the env fixtures.
+      cleanUp:
+        policy: dryrun
+        additionalResources:
+          - kind: Secret
+            name: bootstrap-token-??????
+        accumulatingResources:
+          jobs:
+            type: all
+          configmaps:
+            type: age
+            age: 30d
+          secrets:
+            type: count
+            count: 7
+    hooks:
+      preBuild: test-hooks/pre-build.bash
+      preTaggingTests: test-hooks/pre-tagging-tests.bash
+      postVersionsAndNaming: test-hooks/post-versions-and-naming.bash
+      preDockerPrepare: test-hooks/pre-docker-prepare.bash
+      postDockerTests: test-hooks/post-docker-tests.bash
+      prePackagePrepare: test-hooks/pre-package-prepare.bash
+      postPackageTests: test-hooks/post-package-tests.bash
+      postBuild: test-hooks/post-build.bash
