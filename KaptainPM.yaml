@@ -1,4 +1,4 @@
-apiVersion: kaptain.org/1.37
+apiVersion: kaptain.org/1.39
 kind: kubernetes-run-environment
 spec:
   global:
