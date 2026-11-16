@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    uses: kube-kaptain/buildon-github-actions/.github/workflows/kubernetes-run-environment.yaml@validate-gh-actions-security-efficiency-changes-06
+    uses: kube-kaptain/buildon-github-actions/.github/workflows/kubernetes-run-environment.yaml@validate-gh-actions-security-efficiency-changes-07
     permissions:
       contents: write
       packages: write
